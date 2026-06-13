@@ -35,7 +35,9 @@ export class Room {
     this.botTimers = [];
     this.seats = [];
     this.hostId = this.addSeat('human', hostName).id;
-    this.addSeat('bot');
+    // default the second seat to OPEN so an invited friend can join right away;
+    // the host can switch it to a bot for solo play.
+    this.addSeat('open');
     ROOMS.set(this.code, this);
   }
 
@@ -68,7 +70,7 @@ export class Room {
           if (seat.kind === 'human' && seat.connected) return { error: 'Cannot remove a seated player.' };
           this.seats.pop();
         }
-        while (this.seats.length < n) this.addSeat('bot');
+        while (this.seats.length < n) this.addSeat('open');
         return { ok: true };
       }
       case 'setSeatKind': {
@@ -86,7 +88,7 @@ export class Room {
       case 'setMode': {
         if (!isHost) return { error: 'Host only.' };
         if (msg.mode === 'teams' && this.seats.length < 4) {
-          while (this.seats.length < 4) this.addSeat('bot');
+          while (this.seats.length < 4) this.addSeat('open');
         }
         this.mode = msg.mode === 'teams' ? 'teams' : 'ffa';
         return { ok: true };

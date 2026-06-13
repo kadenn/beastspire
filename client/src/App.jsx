@@ -168,15 +168,18 @@ function Lobby({ lobby, you, db }) {
                     {seat.kind === 'human' && !seat.connected && seat.id !== lobby.hostId ? ' · waiting…' : ''}
                   </div>
                   <div className="seat-kind">
-                    {isHost && seat.id !== lobby.hostId ? (
-                      <select className="input mini" value={seat.kind === 'bot' ? 'bot' : 'open'}
-                        disabled={seat.kind === 'human' && seat.connected}
-                        onChange={e => send({ type: 'setSeatKind', seatId: seat.id, kind: e.target.value })}>
-                        <option value="open">Open (human joins)</option>
-                        <option value="bot">Bot</option>
-                      </select>
+                    {isHost && seat.id !== lobby.hostId && !(seat.kind === 'human' && seat.connected) ? (
+                      seat.kind === 'bot' ? (
+                        <button className="btn mini" onClick={() => send({ type: 'setSeatKind', seatId: seat.id, kind: 'open' })}>
+                          ✕ Remove bot
+                        </button>
+                      ) : (
+                        <button className="btn mini" onClick={() => send({ type: 'setSeatKind', seatId: seat.id, kind: 'bot' })}>
+                          + Add bot
+                        </button>
+                      )
                     ) : (
-                      <span className="muted">{seat.kind === 'bot' ? 'Bot' : seat.kind === 'open' ? 'Open seat' : 'Human'}</span>
+                      <span className="muted">{seat.kind === 'bot' ? 'Bot' : seat.kind === 'open' ? 'Open · waiting for a friend' : 'Human'}</span>
                     )}
                   </div>
                 </div>
