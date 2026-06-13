@@ -35,6 +35,13 @@ h1, h2, .logo, .card-name, .room-code { font-family: 'Grenze Gotisch', serif; le
 .firefly.f2 { animation-delay: 2.4s; animation-duration: 3.8s; }
 .firefly.f3 { animation-delay: 3.1s; animation-duration: 6.2s; }
 @keyframes firefly { 0%, 100% { opacity: .05; } 50% { opacity: .5; transform: translate(8px, -10px); } }
+.god-rays { transform-origin: 80% 0; animation: rays 14s ease-in-out infinite; }
+@keyframes rays { 0%, 100% { opacity: .65; transform: skewX(0deg); } 50% { opacity: 1; transform: skewX(-2.5deg); } }
+.moon-glow { transform-origin: 950px 135px; animation: moonpulse 9s ease-in-out infinite; }
+@keyframes moonpulse { 0%, 100% { opacity: .85; } 50% { opacity: 1.1; transform: scale(1.05); } }
+@media (prefers-reduced-motion: reduce) {
+  .mist-band, .firefly, .god-rays, .moon-glow, .sprite-box { animation: none !important; }
+}
 
 /* ---------- shared ---------- */
 

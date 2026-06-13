@@ -159,53 +159,148 @@ export function CardArt({ cardId, archetype }) {
 
 // ---------- Forest backdrop ----------
 
+// A hand-built painted forest clearing at dusk: layered tree masses fading into
+// fog for depth, a moonlit ground plane the beasts stand on, god-rays through
+// the canopy, framing foreground trunks, drifting mist and fireflies. All one
+// SVG so it scales crisply and themes from CSS-free literal colors.
+
+// soft rounded tree-mass silhouette (a clump of canopy on a trunk)
+function treeMass(x, baseY, h, w, fill, key) {
+  const top = baseY - h;
+  return (
+    <g key={key} fill={fill}>
+      <path d={`M${x - w} ${baseY}
+        C ${x - w} ${top + h * 0.45}, ${x - w * 0.6} ${top}, ${x} ${top}
+        C ${x + w * 0.6} ${top}, ${x + w} ${top + h * 0.45}, ${x + w} ${baseY} Z`} />
+      <rect x={x - w * 0.12} y={baseY - h * 0.25} width={w * 0.24} height={h * 0.3} />
+    </g>
+  );
+}
+
+// tall conifer for the framing foreground
+function conifer(x, baseY, h, w, fill, key) {
+  const tiers = [];
+  for (let i = 0; i < 4; i++) {
+    const ty = baseY - (h * (0.18 + i * 0.2));
+    const tw = w * (1 - i * 0.18);
+    const th = h * 0.34;
+    tiers.push(`M${x - tw} ${ty} L${x} ${ty - th} L${x + tw} ${ty} Z`);
+  }
+  return (
+    <g key={key} fill={fill}>
+      <rect x={x - w * 0.06} y={baseY - h * 0.15} width={w * 0.12} height={h * 0.2} />
+      <path d={tiers.join(' ')} />
+    </g>
+  );
+}
+
 export function ForestBackdrop() {
   return (
-    <svg className="forest-bg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice">
+    <svg className="forest-bg" viewBox="0 0 1280 800" preserveAspectRatio="xMidYMax slice">
       <defs>
         <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#070f14" /><stop offset=".45" stopColor="#0b2018" /><stop offset=".8" stopColor="#123424" /><stop offset="1" stopColor="#1a4530" />
+          <stop offset="0" stopColor="#0a141c" /><stop offset=".38" stopColor="#10241f" />
+          <stop offset=".7" stopColor="#163322" /><stop offset="1" stopColor="#0c2417" />
         </linearGradient>
+        <radialGradient id="skyglow" cx=".74" cy=".16" r=".7">
+          <stop offset="0" stopColor="#2a4a44" stopOpacity=".75" /><stop offset="1" stopColor="#2a4a44" stopOpacity="0" />
+        </radialGradient>
         <radialGradient id="moonglow" cx=".5" cy=".5" r=".5">
-          <stop offset="0" stopColor="#e8f4cc" stopOpacity=".5" /><stop offset="1" stopColor="#e8f4cc" stopOpacity="0" />
+          <stop offset="0" stopColor="#eef6d6" stopOpacity=".6" /><stop offset=".5" stopColor="#cfe0b0" stopOpacity=".22" /><stop offset="1" stopColor="#cfe0b0" stopOpacity="0" />
         </radialGradient>
-        <radialGradient id="clearing" cx=".5" cy="1" r="1">
-          <stop offset="0" stopColor="#2c5a3c" stopOpacity=".55" /><stop offset=".6" stopColor="#16402a" stopOpacity=".25" /><stop offset="1" stopColor="#081710" stopOpacity="0" />
-        </radialGradient>
-        <linearGradient id="mist" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#9ecfae" stopOpacity="0" /><stop offset=".5" stopColor="#9ecfae" stopOpacity=".10" /><stop offset="1" stopColor="#9ecfae" stopOpacity="0" />
+        <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#1c3a26" /><stop offset=".5" stopColor="#13301f" /><stop offset="1" stopColor="#0a1d12" />
         </linearGradient>
+        <radialGradient id="clearing" cx=".5" cy=".15" r=".9">
+          <stop offset="0" stopColor="#3f7a52" stopOpacity=".55" /><stop offset=".55" stopColor="#234a30" stopOpacity=".25" /><stop offset="1" stopColor="#0a1d12" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id="ray" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#dff0c0" stopOpacity=".22" /><stop offset="1" stopColor="#dff0c0" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="mist" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#a8d2b8" stopOpacity="0" /><stop offset=".5" stopColor="#a8d2b8" stopOpacity=".12" /><stop offset="1" stopColor="#a8d2b8" stopOpacity="0" />
+        </linearGradient>
+        <radialGradient id="vignette" cx=".5" cy=".46" r=".75">
+          <stop offset=".55" stopColor="#000" stopOpacity="0" /><stop offset="1" stopColor="#000" stopOpacity=".55" />
+        </radialGradient>
+        <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" /><feColorMatrix type="saturate" values="0" /></filter>
+        <filter id="soft"><feGaussianBlur stdDeviation="6" /></filter>
       </defs>
-      <rect width="1200" height="800" fill="url(#sky)" />
-      <circle cx="960" cy="120" r="150" fill="url(#moonglow)" />
-      <circle cx="960" cy="120" r="48" fill="#e9f2d2" opacity=".85" />
-      <circle cx="946" cy="108" r="9" fill="#c9d8ae" opacity=".5" />
-      <circle cx="975" cy="135" r="6" fill="#c9d8ae" opacity=".4" />
-      {/* far tree line */}
-      <g fill="#091a12" opacity=".9">
-        {[40, 190, 330, 470, 640, 790, 930, 1080].map((x, i) => (
-          <path key={i} d={`M${x} 800 L${x} ${300 + (i % 3) * 60} L${x - 60} ${410 + (i % 3) * 50} L${x - 24} ${400 + (i % 3) * 50} L${x - 80} ${550} L${x - 30} ${540} L${x - 70} 690 L${x + 70} 690 L${x + 30} 540 L${x + 80} 550 L${x + 24} ${400 + (i % 3) * 50} L${x + 60} ${410 + (i % 3) * 50} Z`} />
+
+      {/* sky */}
+      <rect width="1280" height="800" fill="url(#sky)" />
+      <rect width="1280" height="800" fill="url(#skyglow)" />
+
+      {/* moon */}
+      <circle cx="950" cy="135" r="170" fill="url(#moonglow)" className="moon-glow" />
+      <circle cx="950" cy="135" r="52" fill="#eef6d6" opacity=".9" />
+      <circle cx="934" cy="122" r="10" fill="#c4d4a4" opacity=".45" />
+      <circle cx="966" cy="150" r="7" fill="#c4d4a4" opacity=".4" />
+      <circle cx="958" cy="118" r="5" fill="#c4d4a4" opacity=".35" />
+
+      {/* stars / dust */}
+      <g fill="#dfeccb">
+        {[120, 260, 420, 560, 1120, 1200, 360, 700, 1040].map((x, i) => (
+          <circle key={i} cx={x} cy={40 + ((i * 71) % 160)} r={0.8 + (i % 2) * 0.6} opacity={0.25 + (i % 3) * 0.12} />
         ))}
       </g>
-      {/* near trees framing the arena */}
-      <g fill="#0a2014" opacity=".95">
-        {[70, 1130].map((x, i) => (
-          <path key={i} d={`M${x} 800 L${x} ${380} L${x - 110} ${560} L${x - 40} ${545} L${x - 130} 800 Z M${x} ${380} L${x + 110} ${560} L${x + 40} ${545} L${x + 130} 800 Z`} />
-        ))}
-        {[330, 880].map((x, i) => (
-          <path key={i} d={`M${x} 800 L${x} ${500} L${x - 90} ${650} L${x - 30} ${635} L${x - 100} 800 Z M${x} ${500} L${x + 90} ${650} L${x + 30} ${635} L${x + 100} 800 Z`} />
-        ))}
+
+      {/* god rays slanting from the canopy */}
+      <g className="god-rays">
+        {[
+          'M820 -40 L1020 -40 L1280 620 L1080 620 Z',
+          'M620 -40 L720 -40 L880 560 L760 560 Z',
+          'M980 -40 L1060 -40 L1260 480 L1160 480 Z',
+        ].map((d, i) => <path key={i} d={d} fill="url(#ray)" />)}
       </g>
-      {/* moonlit clearing on the arena floor */}
-      <ellipse cx="600" cy="800" rx="640" ry="320" fill="url(#clearing)" />
-      <rect x="0" y="560" width="1200" height="120" fill="url(#mist)" className="mist-band" />
-      <rect x="-300" y="620" width="1200" height="90" fill="url(#mist)" className="mist-band slow" />
+
+      {/* layer 1 — farthest ridge, heavily fogged (light = far) */}
+      <g opacity=".5" filter="url(#soft)">
+        {[60, 200, 340, 480, 620, 760, 900, 1040, 1180, 1260].map((x, i) =>
+          treeMass(x, 470, 150 + (i % 3) * 40, 95, '#274736', `f1-${i}`))}
+      </g>
+      {/* layer 2 — mid trees */}
+      <g opacity=".82">
+        {[30, 170, 300, 440, 600, 740, 880, 1010, 1150, 1270].map((x, i) =>
+          treeMass(x, 530, 190 + (i % 4) * 45, 110, '#16321f', `f2-${i}`))}
+      </g>
+      {/* layer 3 — near tree line */}
+      <g>
+        {[-20, 130, 270, 520, 700, 980, 1120, 1300].map((x, i) =>
+          treeMass(x, 600, 230 + (i % 3) * 55, 130, '#0d2114', `f3-${i}`))}
+      </g>
+
+      {/* ground plane the beasts stand on */}
+      <path d="M0 560 Q640 500 1280 560 L1280 800 L0 800 Z" fill="url(#ground)" />
+      <ellipse cx="640" cy="640" rx="720" ry="240" fill="url(#clearing)" />
+      {/* a few ground rocks / tufts for grounding */}
+      <g fill="#0a1d12" opacity=".7">
+        <ellipse cx="180" cy="720" rx="60" ry="16" /><ellipse cx="1080" cy="710" rx="70" ry="18" />
+        <ellipse cx="640" cy="770" rx="120" ry="22" />
+      </g>
+
+      {/* drifting mist over the floor */}
+      <rect x="-200" y="560" width="1680" height="120" fill="url(#mist)" className="mist-band" />
+      <rect x="-400" y="630" width="1680" height="100" fill="url(#mist)" className="mist-band slow" />
+
+      {/* foreground framing conifers (darkest, closest) */}
+      <g>
+        {conifer(40, 820, 560, 150, '#061309', 'fg-l')}
+        {conifer(1240, 820, 600, 165, '#061309', 'fg-r')}
+        {conifer(150, 850, 360, 110, '#081710', 'fg-l2')}
+        {conifer(1140, 850, 380, 115, '#081710', 'fg-r2')}
+      </g>
+
       {/* fireflies */}
-      <g fill="#e8f4cc">
-        {[150, 320, 520, 680, 860, 1040, 240, 760].map((x, i) => (
-          <circle key={i} cx={x} cy={220 + ((i * 137) % 320)} r={1.6 + (i % 2)} className={`firefly f${i % 4}`} />
+      <g fill="#eef6d6">
+        {[210, 380, 560, 720, 900, 1080, 300, 820, 1180].map((x, i) => (
+          <circle key={i} cx={x} cy={300 + ((i * 137) % 300)} r={1.6 + (i % 2)} className={`firefly f${i % 4}`} />
         ))}
       </g>
+
+      {/* paper-grain + vignette to bind the layers into a painted look */}
+      <rect width="1280" height="800" filter="url(#grain)" opacity=".05" />
+      <rect width="1280" height="800" fill="url(#vignette)" />
     </svg>
   );
 }
