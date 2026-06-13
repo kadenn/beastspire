@@ -213,8 +213,8 @@ Currently a web app served by the Node server. Steam needs a desktop binary.
       vertical slice is the best wishlist driver.
 - [ ] **Steam Next Fest** participation (demo + livestream) — the single biggest
       free visibility event for indies.
-- [ ] **Community** — Discord, devlog/Steam news, Reddit (r/deckbuilders,
-      r/roguelikes), TikTok/short-form clips of big combat moments.
+- [ ] **Community** — Discord, devlog/Steam news, Reddit (r/roguelikes,
+      r/deckbuilders), TikTok/short-form clips of big combat moments.
 - [ ] **Influencer/press** outreach with keys pre-launch.
 - [ ] **Pricing & EA decision** — Early Access is well-suited here (lets you grow
       content with players and fund development); price comps: $15–25 for the genre.
