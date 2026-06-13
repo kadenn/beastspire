@@ -165,6 +165,9 @@ h1, h2, .logo, .card-name, .room-code { font-family: 'Grenze Gotisch', serif; le
 }
 
 .topbar { display: flex; justify-content: space-between; align-items: center; padding-right: 3rem; }
+.topbar-right { display: flex; align-items: center; gap: .7rem; }
+.quit-btn { border-color: #7e4034; color: #ffcabf; }
+.quit-btn:hover:not(:disabled) { border-color: #e2745f; }
 .round-info { font-size: 1.05rem; }
 .mode-chip { background: #1e3a52; border-radius: 6px; padding: .1em .5em; margin-left: .6em; font-size: .8rem; font-weight: 700; }
 .wrath-chip { color: #ffb35c; margin-left: .6em; font-weight: 600; animation: pulse 1.6s infinite; }

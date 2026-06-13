@@ -51,6 +51,7 @@ export function Game({ msg, db, onToast, onLeave }) {
   const [selected, setSelected] = useState(null);  // selected hand card uid
   const [now, setNow] = useState(Date.now());
   const [showDeck, setShowDeck] = useState(false);
+  const [confirmQuit, setConfirmQuit] = useState(false);
 
   const panelRefs = useRef({});
   const lastSettled = useRef(null);
@@ -248,7 +249,13 @@ export function Game({ msg, db, onToast, onLeave }) {
             ? <span className="wrath-chip">🌲 Forest's Wrath: {(view.round - view.wrathRound + 1) * 2} dmg/round</span>
             : <span className="muted"> · wrath at round {view.wrathRound}</span>}
         </div>
-        {view.phase === 'combat' && <div className={`timer ${secsLeft <= 10 ? 'low' : ''}`}>⏱ {secsLeft}s</div>}
+        <div className="topbar-right">
+          {view.phase === 'combat' && <div className={`timer ${secsLeft <= 10 ? 'low' : ''}`}>⏱ {secsLeft}s</div>}
+          <button className="btn mini quit-btn" title="Leave the match"
+            onClick={() => (view.phase === 'over' ? onLeave() : setConfirmQuit(true))}>
+            Leave ⏏
+          </button>
+        </div>
       </div>
 
       {/* battle arena */}
@@ -363,6 +370,23 @@ export function Game({ msg, db, onToast, onLeave }) {
               ))}
             </div>
             <button className="btn" onClick={() => setShowDeck(false)}>Close</button>
+          </div>
+        </div>
+      )}
+
+      {confirmQuit && (
+        <div className="overlay" onClick={() => setConfirmQuit(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h2>Leave the match?</h2>
+            <p className="muted center">
+              {me.alive
+                ? 'A bot will take over your beast and the match continues for everyone else.'
+                : 'You’ll return to the den.'}
+            </p>
+            <div className="row">
+              <button className="btn" onClick={() => setConfirmQuit(false)}>Stay</button>
+              <button className="btn primary" onClick={onLeave}>Leave</button>
+            </div>
           </div>
         </div>
       )}
